@@ -1,6 +1,3 @@
-# An example of how to convert a given API workflow into its own Replicate model
-# Replace predict.py with this file when building your own workflow
-
 import os
 import mimetypes
 import json
@@ -29,7 +26,6 @@ class Predictor(BasePredictor):
         self.comfyUI = ComfyUI("127.0.0.1:8188")
         self.comfyUI.start_server(OUTPUT_DIR, INPUT_DIR)
 
-        # Give a list of weights filenames to download during setup
         with open(api_json_file, "r") as file:
             workflow = json.loads(file.read())
         self.comfyUI.handle_weights(
