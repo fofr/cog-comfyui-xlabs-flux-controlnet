@@ -129,7 +129,7 @@ class Predictor(BasePredictor):
             default="depth",
         ),
         control_strength: float = Input(
-            description="Strength of control net. Different controls work better with different strengths. Canny works best with 0.5, soft edge works best with 1, and depth works best between 0.5 and 0.75. If images are low quality, try reducing the strength and try reducing the guidance scale.",
+            description="Strength of control net. Different controls work better with different strengths. Canny works best with 0.5, soft edge works best with 0.4, and depth works best between 0.5 and 0.75. If images are low quality, try reducing the strength and try reducing the guidance scale.",
             default=0.5,
             le=3,
             ge=0,
