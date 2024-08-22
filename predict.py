@@ -136,7 +136,6 @@ class Predictor(BasePredictor):
         ),
         control_image: Path = Input(
             description="Image to use with control net",
-            default=None,
         ),
         image_to_image_strength: float = Input(
             description="Strength of image to image control. 0 means none of the control image is used. 1 means the control image is returned used as is. Try values between 0 and 0.25 for best results.",
