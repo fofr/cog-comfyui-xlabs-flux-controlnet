@@ -1,0 +1,263 @@
+{
+  "3": {
+    "inputs": {
+      "noise_seed": 1120407189748718,
+      "steps": 25,
+      "timestep_to_start_cfg": 1,
+      "true_gs": 3.5,
+      "image_to_image_strength": 0,
+      "model": [
+        "61",
+        0
+      ],
+      "conditioning": [
+        "53",
+        0
+      ],
+      "neg_conditioning": [
+        "57",
+        0
+      ],
+      "latent_image": [
+        "56",
+        0
+      ],
+      "controlnet_condition": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "XlabsSampler",
+    "_meta": {
+      "title": "Xlabs Sampler"
+    }
+  },
+  "4": {
+    "inputs": {
+      "clip_name1": "clip_l.safetensors",
+      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "flux"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "7": {
+    "inputs": {
+      "samples": [
+        "3",
+        0
+      ],
+      "vae": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "8": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "13": {
+    "inputs": {
+      "model_name": "flux-dev",
+      "controlnet_path": "flux-depth-controlnet-v3.safetensors"
+    },
+    "class_type": "LoadFluxControlNet",
+    "_meta": {
+      "title": "Load Flux ControlNet"
+    }
+  },
+  "14": {
+    "inputs": {
+      "strength": 0.75,
+      "controlnet": [
+        "13",
+        0
+      ],
+      "image": [
+        "51",
+        0
+      ]
+    },
+    "class_type": "ApplyFluxControlNet",
+    "_meta": {
+      "title": "Apply Flux ControlNet"
+    }
+  },
+  "16": {
+    "inputs": {
+      "image": "people-0_3.webp",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "23": {
+    "inputs": {
+      "filename_prefix": "R8_FLUX_XLABS",
+      "images": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "32": {
+    "inputs": {
+      "unet_name": "flux1-dev.safetensors",
+      "weight_dtype": "fp8_e4m3fn"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "39": {
+    "inputs": {
+      "images": [
+        "51",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "51": {
+    "inputs": {
+      "preprocessor": "Zoe_DepthAnythingPreprocessor",
+      "resolution": 1024,
+      "image": [
+        "55",
+        0
+      ]
+    },
+    "class_type": "AIO_Preprocessor",
+    "_meta": {
+      "title": "AIO Aux Preprocessor"
+    }
+  },
+  "53": {
+    "inputs": {
+      "clip_l": "photo",
+      "t5xxl": "photo",
+      "guidance": 3.5,
+      "clip": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncodeFlux",
+    "_meta": {
+      "title": "CLIPTextEncodeFlux"
+    }
+  },
+  "54": {
+    "inputs": {
+      "target_size": 1024,
+      "multiple_of": 16,
+      "image": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "Width and height for scaling image to ideal resolution 🪴",
+    "_meta": {
+      "title": "Width and height for scaling image to ideal resolution 🪴"
+    }
+  },
+  "55": {
+    "inputs": {
+      "width": [
+        "54",
+        0
+      ],
+      "height": [
+        "54",
+        1
+      ],
+      "interpolation": "lanczos",
+      "method": "keep proportion",
+      "condition": "always",
+      "multiple_of": 16,
+      "image": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "ImageResize+",
+    "_meta": {
+      "title": "🔧 Image Resize"
+    }
+  },
+  "56": {
+    "inputs": {
+      "pixels": [
+        "55",
+        0
+      ],
+      "vae": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "57": {
+    "inputs": {
+      "clip_l": "nsfw, ugly, artefacts, low quality, compressed",
+      "t5xxl": "nsfw, ugly, artefacts, low quality, compressed",
+      "guidance": 3.5,
+      "clip": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncodeFlux",
+    "_meta": {
+      "title": "CLIPTextEncodeFlux"
+    }
+  },
+  "61": {
+    "inputs": {
+      "max_shift": 1.15,
+      "base_shift": 0.5,
+      "width": [
+        "55",
+        1
+      ],
+      "height": [
+        "55",
+        2
+      ],
+      "model": [
+        "32",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingFlux",
+    "_meta": {
+      "title": "ModelSamplingFlux"
+    }
+  }
+}
