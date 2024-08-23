@@ -2,7 +2,6 @@ import os
 import mimetypes
 import json
 import shutil
-import re
 from typing import List
 from cog import BasePredictor, Input, Path
 from comfyui import ComfyUI
