@@ -2,22 +2,21 @@ import os
 import mimetypes
 import json
 import shutil
+import re
 from typing import List
 from cog import BasePredictor, Input, Path
 from comfyui import ComfyUI
 from cog_model_helpers import optimise_images
 from cog_model_helpers import seed as seed_helper
+from download_external_lora import DownloadExternalLora
 
 OUTPUT_DIR = "/tmp/outputs"
 INPUT_DIR = "/tmp/inputs"
 COMFYUI_TEMP_OUTPUT_DIR = "ComfyUI/temp"
-ALL_DIRECTORIES = [OUTPUT_DIR, INPUT_DIR, COMFYUI_TEMP_OUTPUT_DIR]
+HF_TEMP_DIR = "TEMP_HF"
+ALL_DIRECTORIES = [OUTPUT_DIR, INPUT_DIR, COMFYUI_TEMP_OUTPUT_DIR, HF_TEMP_DIR]
 mimetypes.add_type("image/webp", ".webp")
 api_json_file = "workflow_api.json"
-
-# Force HF offline
-os.environ["HF_DATASETS_OFFLINE"] = "1"
-os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
 
 
@@ -63,6 +62,12 @@ class Predictor(BasePredictor):
             "depth": "flux-depth-controlnet-v3.safetensors",
         }[control_type]
 
+    def download_lora(self, lora):
+        print(f"Downloading LoRA from {lora}")
+        downloader = DownloadExternalLora()
+        lora_file_name = downloader.download(lora)
+        return lora_file_name
+
     def update_workflow(self, workflow, **kwargs):
         positive_prompt = workflow["53"]["inputs"]
         positive_prompt["clip_l"] = kwargs["prompt"]
@@ -101,6 +106,15 @@ class Predictor(BasePredictor):
 
         preprocessor = workflow["51"]["inputs"]
         preprocessor["preprocessor"] = self.preprocessor_map(preprop)
+
+        using_lora = kwargs["lora_filename"] is not None
+        if using_lora:
+            lora_loader = workflow["65"]["inputs"]
+            lora_loader["lora_name"] = kwargs["lora_filename"]
+            lora_loader["strength_model"] = kwargs["lora_strength"]
+        else:
+            del workflow["65"]
+            workflow["61"]["inputs"]["model"] = ["32", 0]
 
     def predict(
         self,
@@ -153,6 +167,16 @@ class Predictor(BasePredictor):
             choices=["HED", "TEED", "PiDiNet"],
             default="HED",
         ),
+        lora_url: str = Input(
+            description="Optional LoRA model to use. Give a URL to a HuggingFace .safetensors file, a Replicate .tar file or a CivitAI download link.",
+            default="",
+        ),
+        lora_strength: float = Input(
+            description="Strength of LoRA model",
+            default=1,
+            le=3,
+            ge=-1,
+        ),
         return_preprocessed_image: bool = Input(
             description="Return the preprocessed image used to control the generation process. Useful for debugging.",
             default=False,
@@ -172,6 +196,10 @@ class Predictor(BasePredictor):
             )
             self.handle_input_file(control_image, control_image_filename)
 
+        lora_filename = None
+        if lora_url:
+            lora_filename = self.download_lora(lora_url)
+
         with open(api_json_file, "r") as file:
             workflow = json.loads(file.read())
 
@@ -189,6 +217,8 @@ class Predictor(BasePredictor):
             image_to_image_strength=image_to_image_strength,
             return_preprocessed_image=return_preprocessed_image,
             seed=seed,
+            lora_filename=lora_filename,
+            lora_strength=lora_strength,
         )
 
         wf = self.comfyUI.load_workflow(workflow)

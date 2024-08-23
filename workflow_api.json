@@ -251,13 +251,27 @@
         2
       ],
       "model": [
-        "32",
+        "65",
         0
       ]
     },
     "class_type": "ModelSamplingFlux",
     "_meta": {
       "title": "ModelSamplingFlux"
+    }
+  },
+  "65": {
+    "inputs": {
+      "lora_name": "",
+      "strength_model": 0.8,
+      "model": [
+        "32",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoraLoaderModelOnly"
     }
   }
 }
